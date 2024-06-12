@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOST REACT</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+    <style>
+        body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #6B73FF 10%, #000DFF 100%);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+    padding: 0 20px;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    color: #333;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+    padding: 12px 0;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.spinner {
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+#result {
+    margin-top: 20px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: left;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#result.success {
+    color: #28a745;
+    border: 1px solid #28a745;
+}
+
+#result.error {
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+.note {
+    margin-top: 20px;
+    background-color: #e7f3fe;
+    color: #31708f;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #bce8f1;
+    font-size: 14px;
+    text-align: center;
+}
+
+.note a {
+    color: darkcyan;
+    text-decoration: none;
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}
+
+    </style>
+<body>
+    <div class="container">
+        <br><br>
+        <h1><i class="fab fa-facebook"></i> BOOST REACT</h1>
+        <form id="apiForm">
+            <label for="link"><i class="fas fa-link"></i> Post Link</label>
+            <input type="text" id="link" name="link" required><br><br>
+            
+            <label><i class="fas fa-thumbs-up"></i> React Type</label>
+            <select id="type" name="type" required>
+                <option value="LIKE">👍🏻 LIKE</option>
+                <option value="LOVE">❤️ LOVE</option>
+                <option value="CARE">🥰 CARE</option>
+                <option value="WOW">😯 WOW</option>
+                <option value="SAD">😢 SAD</option>
+                <option value="ANGRY">😡 ANGRY</option>
+            </select><br><br>
+            
+            <label for="cookie"><i class="fas fa-cookie"></i> Cookie</label>
+            <input type="text" id="cookie" name="cookie" required><br><br>
+            
+            <button type="submit"><i class="fas fa-rocket"></i> Submit</button>
+        </form>
+        <div id="spinner" class="spinner" style="display:none;">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div id="result"></div>
+        <div class="note">
+            - Note:<br>Ensure that the link and cookie are valid before submitting the form. The form will be disabled for <span id="cooldown">30</span> seconds after each submission.<br>- Don't sell this tool<br>- Highly recommend using a dummy account to avoid suspension and lock account<br>- API Credits: flikers.net<br>- Kindly message the developer <a href="https://www.facebook.com/100077070762554">HeruDev</a><br>
+            - Get your cookie here <a href="https://my-simple-web-tools.vercel.app">Tap!</a>
+        </div>
+    </div>
+    <footer>
+        © 2024 | HeruDev | All rights reserved.
+    </footer>
+
+    <script>
+        document.getElementById('apiForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const link = document.getElementById('link').value;
+            const type = document.getElementById('type').value;
+            const cookie = document.getElementById('cookie').value;
+            const spinner = document.getElementById('spinner');
+            const result = document.getElementById('result');
+            const submitButton = document.querySelector('button[type="submit"]');
+            const cooldownElement = document.getElementById('cooldown');
+
+            spinner.style.display = 'block';
+            result.innerText = '';
+            submitButton.disabled = true;
+            let cooldown = 30;
+
+            const countdown = setInterval(() => {
+                cooldown -= 1;
+                cooldownElement.innerText = cooldown;
+                if (cooldown <= 0) {
+                    clearInterval(countdown);
+                    submitButton.disabled = false;
+                }
+            }, 1000);
+
+            try {
+                const response = await fetch(`/api/react?link=${encodeURIComponent(link)}&type=${encodeURIComponent(type)}&cookie=${encodeURIComponent(cookie)}`);
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                result.innerText = 'Success: ' + JSON.stringify(data, null, 2);
+                result.classList.add('success');
+                result.classList.remove('error');
+            } catch (error) {
+                result.innerText = 'Failed: Please try again. Error: ' + error.message;
+                result.classList.add('error');
+                result.classList.remove('success');
+            } finally {
+                spinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
